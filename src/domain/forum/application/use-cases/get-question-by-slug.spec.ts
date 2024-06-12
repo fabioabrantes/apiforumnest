@@ -4,35 +4,68 @@ import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-questio
 import { Slug } from '@/domain/forum/enterprise/entities/value-objects/slug';
 import { factoryQuestion } from 'test/factories/factory-question';
 import { InMemoryQuestionAttachmentsRepository } from 'test/repositories/in-memory-question-attachments-repository';
+import { InMemoryAttachmentsRepository } from 'test/repositories/in-memory-attachments-repository';
+import { InMemoryStudentsRepository } from 'test/repositories/in-memory-students-repository';
+import { factoryStudent } from 'test/factories/factory-student';
+import { factoryQuestionAttachment } from 'test/factories/factory-question-attachments';
+import { makeAttachment } from 'test/factories/factory-attachment';
 
 let inMemoryQuestionAttachmentsRepository: InMemoryQuestionAttachmentsRepository;
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository;
+let inMemoryAttachmentsRepository: InMemoryAttachmentsRepository;
+let inMemoryStudentsRepository: InMemoryStudentsRepository;
 let sut: GetQuestionBySlugUseCase;
 
 describe('Get Question By Slug', () => {
   beforeEach(() => {
     inMemoryQuestionAttachmentsRepository = new InMemoryQuestionAttachmentsRepository();
-    inMemoryQuestionsRepository = new InMemoryQuestionsRepository(inMemoryQuestionAttachmentsRepository)
+    inMemoryAttachmentsRepository = new InMemoryAttachmentsRepository();
+    inMemoryStudentsRepository = new InMemoryStudentsRepository();
+    inMemoryQuestionsRepository = new InMemoryQuestionsRepository(
+      inMemoryQuestionAttachmentsRepository, inMemoryAttachmentsRepository,
+      inMemoryStudentsRepository,);
+
     sut = new GetQuestionBySlugUseCase(inMemoryQuestionsRepository);
   });
 
   it('should be able to get a question by slug', async () => {
+    const student = factoryStudent({ name: 'John Doe' });
+
+    await inMemoryStudentsRepository.create(student);
+
     const newQuestion = factoryQuestion({
+      authorId: student.id,
       slug: Slug.create('example-question')
     });
 
     /* console.log(newQuestion); */
-    await inMemoryQuestionsRepository.create(newQuestion)
+    await inMemoryQuestionsRepository.create(newQuestion);
+
+    const attachment = makeAttachment({ title: 'Some attachment', });
+
+    inMemoryAttachmentsRepository.items.push(attachment);
+
+    inMemoryQuestionAttachmentsRepository.questionAttachments.push(
+      factoryQuestionAttachment({
+        attachmentId: attachment.id,
+        questionId: newQuestion.id,
+      }),
+    );
 
     const result = await sut.execute({
       slug: 'example-question',
     });
 
     expect(result.value).toMatchObject({
-      question: expect.objectContaining({ id: newQuestion.id, }),
-    });
-    expect(result.value).toMatchObject({
-      question: expect.objectContaining({ title: newQuestion.title, }),
+      question: expect.objectContaining({
+        title: newQuestion.title,
+        author: 'John Doe',
+        attachments: [
+          expect.objectContaining({
+            title: attachment.title,
+          }),
+        ],
+      }),
     });
   });
 });

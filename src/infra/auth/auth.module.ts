@@ -12,8 +12,8 @@ import { EnvModule } from '../env/env.module';
   imports: [
     PassportModule,
     JwtModule.registerAsync({
-      imports: [],
-      inject: [EnvModule],
+      imports: [EnvModule],
+      inject: [EnvService],
       global: true,
       useFactory(config: EnvService) {
         const privateKey = config.get('JWT_PRIVATE_KEY')

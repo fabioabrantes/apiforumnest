@@ -1,8 +1,8 @@
 import { UniqueEntityID } from '@/coreShared/entities/unique-entity-id';
 import { Optional } from '@/coreShared/types/optional';
-import { Comment, CommentProps } from './comment-abstract';
+import { Comment, CommentProps } from './comment';
 
-export interface QuestionCommentProps extends CommentProps{
+export interface QuestionCommentProps extends CommentProps {
   questionId: UniqueEntityID;
 }
 
@@ -10,7 +10,7 @@ export class QuestionComment extends Comment<QuestionCommentProps> {
   get questionId() {
     return this.props.questionId;
   }
-  
+
   static create(
     props: Optional<QuestionCommentProps, 'createdAt'>,
     id?: UniqueEntityID,

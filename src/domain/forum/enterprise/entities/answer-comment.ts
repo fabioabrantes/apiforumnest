@@ -1,6 +1,6 @@
 import { UniqueEntityID } from '@/coreShared/entities/unique-entity-id';
 import { Optional } from '@/coreShared/types/optional';
-import { Comment, CommentProps } from './comment-abstract';
+import { Comment, CommentProps } from './comment';
 
 export interface AnswerCommentProps extends CommentProps {
   answerId: UniqueEntityID;

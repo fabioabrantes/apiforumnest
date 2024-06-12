@@ -1,9 +1,12 @@
+import { Injectable } from '@nestjs/common';
+
 import { DomainEvents } from '@/coreShared/events/domain-events';
 import { EventHandler } from '@/coreShared/events/event-handler';
-import { IQuestionsRepository } from '@/domain/forum/application/repositories/i-questions-repository';
-import { AnswerCreatedEvent } from '@/domain/forum/enterprise/events/answer-created-event'
-import { SendNotificationUseCase } from '../use-cases/send-notification';
 
+import { IQuestionsRepository } from '@/domain/forum/application/repositories/i-questions-repository';
+import { AnswerCreatedEvent } from '@/domain/forum/enterprise/events/answer-created-event';
+import { SendNotificationUseCase } from '../use-cases/send-notification';
+@Injectable()
 export class OnAnswerCreatedSubscriber implements EventHandler {
   constructor(
     private questionsRepository: IQuestionsRepository,

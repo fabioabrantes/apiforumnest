@@ -19,4 +19,16 @@ export class InMemoryAnswerAttachmentsRepository implements IAnswerAttachmentsRe
 
     this.answerAttachments = answerAttachments;
   }
+
+  async createMany(attachments: AnswerAttachment[]): Promise<void> {
+    this.answerAttachments.push(...attachments);
+  }
+
+  async deleteMany(attachments: AnswerAttachment[]): Promise<void> {
+    const answerAttachments = this.answerAttachments.filter((item) => {
+      return !attachments.some((attachment) => attachment.equals(item))
+    });
+
+    this.answerAttachments = answerAttachments;
+  }
 }

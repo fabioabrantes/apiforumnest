@@ -20,17 +20,8 @@ type CreateQuestionUseCaseResponse = Either<null, { question: Question }>;
 export class CreateQuestionUseCase {
   constructor(private questionsRepository: IQuestionsRepository) { }
 
-  async execute({
-    authorId,
-    title,
-    content,
-    attachmentsIds
-  }: CreateQuestionUseCaseRequest): Promise<CreateQuestionUseCaseResponse> {
-    const question = Question.create({
-      authorId: new UniqueEntityID(authorId),
-      title,
-      content,
-    });
+  async execute({ authorId, title, content, attachmentsIds }: CreateQuestionUseCaseRequest): Promise<CreateQuestionUseCaseResponse> {
+    const question = Question.create({ authorId: new UniqueEntityID(authorId), title, content, });
 
     const questionAttachments = attachmentsIds.map((attachmentId) => {
       return QuestionAttachment.create({

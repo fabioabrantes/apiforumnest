@@ -25,8 +25,10 @@ model User {
   password String
   role     UserRole @default(STUDENT)
 
-  questions Question[]
-  answers   Answer[]
+  questions     Question[]
+  answers       Answer[]
+  comments      Comment[]
+  notifications Notification[]
 
   @@map("users")
 }
@@ -45,7 +47,9 @@ model Question {
   bestAnswerId String? @unique @map("best_answer_id")
   bestAnswer   Answer? @relation("bestAnswer", fields: [bestAnswerId], references: [id])
 
-  Answer Answer[]
+  answers     Answer[]
+  comments    Comment[]
+  attachments Attachment[]
 
   @@map("questions")
 }
@@ -60,9 +64,55 @@ model Answer {
   author   User   @relation(fields: [authorId], references: [id])
 
   bestAnswerOn Question? @relation("bestAnswer")
-  
-  questionId   String    @map("question_id")
-  question     Question  @relation(fields: [questionId], references: [id])
+
+  questionId String   @map("question_id")
+  question   Question @relation(fields: [questionId], references: [id])
+
+  comments    Comment[]
+  attachments Attachment[]
 
   @@map("answers")
+}
+
+model Comment {
+  id        String    @id @default(uuid())
+  content   String
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  questionId String?   @map("question_id")
+  question   Question? @relation(fields: [questionId], references: [id])
+
+  answerId String? @map("answer_id")
+  answer   Answer? @relation(fields: [answerId], references: [id])
+
+  authorId String @map("author_id")
+  author   User   @relation(fields: [authorId], references: [id])
+
+  @@map("comments")
+}
+
+model Attachment {
+  id         String    @id @default(uuid())
+  title      String
+  url        String
+  questionId String?   @map("question_id")
+  answerId   String?   @map("answer_id")
+  question   Question? @relation(fields: [questionId], references: [id])
+  answer     Answer?   @relation(fields: [answerId], references: [id])
+
+  @@map("attachments")
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  title     String
+  content   String
+  readAt    DateTime? @map("read_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  recipientId String @map("recipient_id")
+  recipient   User   @relation(fields: [recipientId], references: [id])
+
+  @@map("notifications")
 }

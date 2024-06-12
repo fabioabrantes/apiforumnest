@@ -14,6 +14,10 @@ export class InMemoryAnswersRepository implements IAnswersRepository {
   async create(answer: Answer) {
     this.answers.push(answer);
 
+    await this.answerAttachmentsRepository.createMany(
+      answer.attachments.getItems(),
+    );
+
     // Como já salvei a resposta no banco de dados e assim disparando o evento
     DomainEvents.dispatchEventsForAggregate(answer.id);
   }
@@ -39,6 +43,14 @@ export class InMemoryAnswersRepository implements IAnswersRepository {
     const itemIndex = this.answers.findIndex((item) => item.id === answer.id);
 
     this.answers[itemIndex] = answer;
+
+    await this.answerAttachmentsRepository.createMany(
+      answer.attachments.getNewItems(),
+    )
+
+    await this.answerAttachmentsRepository.deleteMany(
+      answer.attachments.getRemovedItems(),
+    )
 
     // Como já salvei a resposta no banco de dados e assim disparando o evento
     DomainEvents.dispatchEventsForAggregate(answer.id);

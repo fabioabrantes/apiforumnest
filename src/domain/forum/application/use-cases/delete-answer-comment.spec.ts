@@ -3,14 +3,17 @@ import { DeleteAnswerCommentUseCase } from '@/domain/forum/application/use-cases
 import { factoryAnswerComment } from 'test/factories/factory-answer-comment';
 import { UniqueEntityID } from '@/coreShared/entities/unique-entity-id';
 import { NotAllowedError } from '@/coreShared/errors/not-allowed-error';
+import { InMemoryStudentsRepository } from 'test/repositories/in-memory-students-repository';
 
 
 let inMemoryAnswerCommentsRepository: InMemoryAnswerCommentsRepository;
+let inMemoryStudentsRepository: InMemoryStudentsRepository;
 let sut: DeleteAnswerCommentUseCase;
 
 describe('Delete Answer Comment', () => {
   beforeEach(() => {
-    inMemoryAnswerCommentsRepository = new InMemoryAnswerCommentsRepository();
+    inMemoryStudentsRepository = new InMemoryStudentsRepository();
+    inMemoryAnswerCommentsRepository = new InMemoryAnswerCommentsRepository(inMemoryStudentsRepository,);
 
     sut = new DeleteAnswerCommentUseCase(inMemoryAnswerCommentsRepository);
   })

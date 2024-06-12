@@ -4,6 +4,7 @@ import { IQuestionsRepository } from '@/domain/forum/application/repositories/i-
 import { Either, error, success } from '@/coreShared/either';
 import { ResourceNotFoundError } from '@/coreShared/errors/resource-not-found-error';
 import { NotAllowedError } from '@/coreShared/errors/not-allowed-error';
+import { Injectable } from '@nestjs/common';
 
 
 interface ChooseQuestionBestAnswerUseCaseRequest {
@@ -17,26 +18,21 @@ type ChooseQuestionBestAnswerUseCaseResponse = Either<
     question: Question
   }
 >;
-
+@Injectable()
 export class ChooseQuestionBestAnswerUseCase {
   constructor(
     private questionsRepository: IQuestionsRepository,
     private answersRepository: IAnswersRepository,
   ) { }
 
-  async execute({
-    answerId,
-    authorId,
-  }: ChooseQuestionBestAnswerUseCaseRequest): Promise<ChooseQuestionBestAnswerUseCaseResponse> {
+  async execute({ answerId, authorId, }: ChooseQuestionBestAnswerUseCaseRequest): Promise<ChooseQuestionBestAnswerUseCaseResponse> {
     const answer = await this.answersRepository.findById(answerId);
 
     if (!answer) {
       return error(new ResourceNotFoundError());
     }
 
-    const question = await this.questionsRepository.findById(
-      answer.questionId.toString(),
-    );
+    const question = await this.questionsRepository.findById(answer.questionId.toString(),);
 
     if (!question) {
       return error(new ResourceNotFoundError());

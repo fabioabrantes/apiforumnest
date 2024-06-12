@@ -1,6 +1,7 @@
 import { Either, success } from '@/coreShared/either';
 import { IAnswersRepository } from '@/domain/forum/application/repositories/i-answers-repository';
 import { Answer } from '@/domain/forum/enterprise/entities/answer';
+import { Injectable } from '@nestjs/common';
 
 interface ListAnswerByQuestionUseCaseRequest {
   questionId: string;
@@ -9,7 +10,7 @@ interface ListAnswerByQuestionUseCaseRequest {
 
 
 type ListAnswerByQuestionUseCaseResponse = Either<null, { answers: Answer[] }>;
-
+@Injectable()
 export class ListAnswerByQuestionUseCase {
   constructor(private answersRepository: IAnswersRepository) { }
 

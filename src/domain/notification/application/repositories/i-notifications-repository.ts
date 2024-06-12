@@ -2,8 +2,8 @@ import { Notification } from '@/domain/notification/enterprise/entities/notifica
 
 
 
-export interface INotificationsRepository {
-  create(notification: Notification): Promise<void>;
-  findById(id: string): Promise<Notification | null>;
-  update(notification: Notification): Promise<void>;
+export abstract class INotificationsRepository {
+  abstract create(notification: Notification): Promise<void>;
+  abstract findById(id: string): Promise<Notification | null>;
+  abstract update(notification: Notification): Promise<void>;
 }
